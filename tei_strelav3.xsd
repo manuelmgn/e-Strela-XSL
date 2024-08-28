@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace">
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="tei_strelav3_xml"/>
+
+  <!-- ESTRUTURA XERAL -->
+  <xs:element name="TEI">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="teiHeader" type="teiHeader-type"/>
+        <xs:element name="text">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="body">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="div" type="div-type" minOccurs="1" maxOccurs="4"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>  
+  </xs:element>
+
+  <!-- CABECEIRA -->
+
+  <!-- Cabeceira: xeral-->
+  <xs:complexType name="teiHeader-type">
+    <xs:sequence>
+      <xs:element name="fileDesc" type="fileDesc-type"/>
+      <xs:choice minOccurs="0" maxOccurs="1">
+        <xs:element name="profileDesc" type="profileDesc-type"/>
+      </xs:choice>
+      <xs:element name="revisionDesc" type="revisionDesc-type"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="fileDesc-type">
+    <xs:sequence>
+      <xs:element name="titleStmt" type="titleStmt-type"/>
+      <xs:element name="editionStmt" type="editionStmt-type"/>
+      <xs:element name="publicationStmt" type="publicationStmt-type"/>
+      <xs:element name="seriesStmt" type="seriesStmt-type"/>
+      <xs:element name="notesStmt" type="notesStmt-type" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="sourceDesc" type="sourceDesc-type"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Cabeceira: fileDesc / titleStmt-->
+  <xs:complexType name="titleStmt-type">
+    <xs:sequence>
+      <xs:group ref="title-type" minOccurs="4" maxOccurs="4"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Cabeceira: fileDesc / editionStmt-->
+  <xs:complexType name="editionStmt-type">
+    <xs:sequence>
+      <xs:element name="edition" type="edition-type"/>
+      <xs:element name="author" type="author-type"/>
+      <xs:element name="respStmt" type="respStmt-type" maxOccurs="unbounded"/>
+      <xs:element name="funder" type="funder-type"/>
+      <xs:element name="principal" type="principal-type"/>
+    </xs:sequence>
+    <xs:attributeGroup ref="n-manuscritos"/>
+  </xs:complexType>
+
+  <xs:simpleType name="edition-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Transcrición paleográfica"/>
+      <xs:enumeration value="Edición crítica"/>
+      <xs:enumeration value="Edición modernizada"/>
+      <xs:enumeration value="Versión en castelán"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="author-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Proxecto e-Strela"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="funder-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Centro Ramón Piñeiro para a Investigación en Humanidades"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="principal-type">
+    <xs:sequence>
+      <xs:element name="persName" type="persName-type" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="respStmt-type">
+    <xs:sequence>
+      <xs:element name="resp">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:maxLength value="30"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="persName" type="persName-type" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Cabeceira: fileDesc / publicationStmt-->
+  <xs:complexType name="publicationStmt-type">
+    <xs:sequence>
+      <xs:element name="authority">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="Afonso X"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="date">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="s\. XIII"/>
+          </xs:restriction>
+        </xs:simpleType></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Cabeceira: fileDesc / seriesStmt -->
+  <xs:complexType name="seriesStmt-type">
+    <xs:sequence>
+      <xs:group ref="title-type"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Cabeceira: fileDesc / notesStmt -->
+  <xs:complexType name="notesStmt-type">
+    <xs:sequence>
+      <xs:element name="note" type="note-type" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="note-type" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="hi" type="hi-type"/>
+      <xs:element name="idno" type="idno-type"/>
+    </xs:choice>
+    <xs:attributeGroup ref="n-2-att"/>
+    <xs:attribute name="type">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="variante"/>
+          <xs:enumeration value="paleogra"/>
+          <xs:enumeration value="notavers"/>
+          <xs:enumeration value="notatext"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="target" type="xs:IDREFS"/>
+  </xs:complexType>
+
+  <!-- Cabeceira: fileDesc / sourceDesc -->
+  <xs:complexType name="sourceDesc-type">
+    <xs:sequence>
+      <xs:element name="msDesc" type="msDesc-type" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="msDesc-type">
+    <xs:sequence>
+      <xs:element name="msIdentifier" type="msIdentifier-type"/>
+      <xs:element name="msContents" type="msContents-type"/>
+      <xs:element name="physDesc" type="physDesc-type" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="msIdentifier-type">
+    <xs:choice minOccurs="1" maxOccurs="1">
+      <xs:sequence>
+        <xs:element name="settlement" type="settlement-type"/>
+        <xs:element name="idno" type="idno-type"/>
+        <xs:element name="msName" type="msName-type"/>
+        <xs:element name="altIdentifier" type="altIdentifier-type"/>
+      </xs:sequence>
+      <xs:element name="objectName" type="xs:string"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:simpleType name="settlement-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Biblioteca Nacional de España"/>
+      <xs:enumeration value="Biblioteca del Monasterio de San Lorenzo de El Escorial"/>
+      <xs:enumeration value="Biblioteca Nazionale Centrale de Florencia"/>
+      <xs:enumeration value="Biblioteca Nacional de Portugal"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="idno-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="BNE MS 10069"/>
+      <xs:enumeration value="RBME MS T.I.1"/>
+      <xs:enumeration value="BNCF MS B.R. 20"/>
+      <xs:enumeration value="RBME MS B.I.2"/>
+      <xs:enumeration value="BNP COD. 10991"/>
+      <xs:enumeration value="To"/>
+      <xs:enumeration value="T"/>
+      <xs:enumeration value="F"/>
+      <xs:enumeration value="E"/>
+      <xs:enumeration value="B"/>
+      <xs:enumeration value="E₁"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="msName-type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Códice de Toledo"/>
+      <xs:enumeration value="Códice Rico de El Escorial"/>
+      <xs:enumeration value="Códice Rico de Florencia"/>
+      <xs:enumeration value="Códice dos Músicos"/>
+      <xs:enumeration value="Cancioneiro da Biblioteca Nacional"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="altIdentifier-type">
+    <xs:sequence>
+      <xs:element name="idno" type="idno-type"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="msContents-type">
+    <xs:sequence>
+      <xs:element name="msItemStruct" type="msItemStruct-type"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="msItemStruct-type">
+    <xs:sequence>
+      <xs:element name="locus" type="locus-type" minOccurs="0" maxOccurs="1"/>
+      <xs:group ref="title-type" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attributeGroup ref="n-manuscritos"/>
+  </xs:complexType>
+
+  <xs:complexType name="locus-type">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="target" type="xs:IDREFS"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="physDesc-type">
+    <xs:sequence>
+      <xs:element name="handDesc"></xs:element>
+      <xs:element name="handNote"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Cabeceira: profileDesc -->
+  <xs:complexType name="profileDesc-type">
+    <xs:sequence>
+      <xs:element name="abstract" type="abstract-type" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="textClass" type="textClass-type" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="abstract-type">
+    <xs:sequence>
+      <xs:element name="p" type="p-type" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="textClass-type">
+    <xs:sequence>
+      <xs:element name="keywords" minOccurs="1" maxOccurs="8" >
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="term" minOccurs="1" maxOccurs="5" type="xs:string">
+            </xs:element>
+          </xs:sequence>
+          <xs:attribute name="scheme">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="tipocsm"/>
+                <xs:enumeration value="mtemati"/>
+                <xs:enumeration value="modestr"/>
+                <xs:enumeration value="tpcobra"/>
+                <xs:enumeration value="tprinci"/>
+                <xs:enumeration value="ppchave"/>
+                <xs:enumeration value="lugares"/>
+                <xs:enumeration value="persona"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Cabeceira: revisionDesc -->
+  <xs:complexType name="revisionDesc-type">
+    <xs:sequence>
+      <xs:element name="change" minOccurs="1" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attribute name="when" type="xs:date"/>
+              <xs:attribute name="who" type="xs:IDREF"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <!-- Cabeceira: comuns -->
+  <xs:group name="title-type">
+    <xs:sequence>
+      <xs:element name="title">
+        <xs:complexType mixed="true">
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attribute name="type" use="required">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="main">
+                      <xs:annotation>
+                        <xs:documentation>CSM (número). Só en titleSmt</xs:documentation>
+                      </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="short">
+                      <xs:annotation>
+                        <xs:documentation>Título abreviado. Só en titleSmt</xs:documentation>
+                      </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="series">
+                      <xs:annotation>
+                        <xs:documentation>Sempre «Cantigas de Santa María». Só en seriesStmt</xs:documentation>
+                      </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="alt">
+                      <xs:annotation>
+                        <xs:documentation>Numeración alternativa.CSM (número). Só en msItemStruct. Pode ser idéntico ao de «main».</xs:documentation>
+                      </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="rubrica">
+                      <xs:annotation>
+                        <xs:documentation>Rúbrica (editada, non transcrita) da cantiga.</xs:documentation>
+                      </xs:annotation>
+                    </xs:enumeration>
+                    <xs:enumeration value="incipit">
+                      <xs:annotation>
+                        <xs:documentation>Incipit (editado, non transcrito) da cantiga.</xs:documentation>
+                      </xs:annotation>
+                    </xs:enumeration>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:attribute>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:complexType name="persName-type">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute ref="xml:id" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+
+  <!-- CORPO -->
+
+  <!-- Corpo: partes xerais -->
+  <xs:complexType name="div-type">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="p" type="p-type"/>
+      <xs:element name="lg" type="lg-type"/>
+    </xs:choice>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="rubrica"/>
+          <xs:enumeration value="refraninicial"/>
+          <xs:enumeration value="cobras"/>
+          <xs:enumeration value="rubricaexplicativa"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="rhyme" use="optional">
+
+    </xs:attribute>
+    <xs:attribute name="met" use="optional">
+
+    </xs:attribute>
+  </xs:complexType>
+
+
+  <xs:complexType name="p-type" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="lb" type="lb-type"/>
+      <xs:element name="cb" type="lb-type"/>
+      <xs:element name="pb" type="pb-type"/>
+      <xs:element name="c" type="c-type"/>
+      <xs:element name="choice" type="choice-type"/>
+      <xs:element name="subst" type="subst-type"/>
+      <xs:element name="add" type="add-type"/>
+      <xs:element name="del" type="del-type"/>
+      <xs:element name="space" type="space-type"/>
+      <xs:element name="gap" type="gap-type"/>
+      <xs:element name="damage" type="damage-type"/>
+      <xs:element name="supplied" type="supplied-type"/>
+      <xs:element name="hi" type="hi-type"/>
+      <xs:element name="unclear" type="unclear-type"/>
+      <xs:element name="ref" type="ref-type"/>
+    </xs:choice>
+    <xs:attribute ref="xml:id" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="lg-type">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="l" type="l-type"/>
+      <xs:element name="lg" type="lg-type"/>
+    </xs:choice>
+    <xs:attribute name="n" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="[0-9]{2}(-\d{1})?"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="refraninicial"/>
+          <xs:enumeration value="cobra"/>
+          <xs:enumeration value="refran"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="l-type" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="lb" type="lb-type"/>
+      <xs:element name="cb" type="lb-type"/>
+      <xs:element name="pb" type="pb-type"/>
+      <xs:element name="c" type="c-type"/>
+      <xs:element name="choice" type="choice-type"/>
+      <xs:element name="subst" type="subst-type"/>
+      <xs:element name="del" type="del-type"/>
+      <xs:element name="add" type="add-type"/>
+      <xs:element name="space" type="space-type"/>
+      <xs:element name="gap" type="gap-type"/>
+      <xs:element name="damage" type="damage-type"/>
+      <xs:element name="supplied" type="supplied-type"/>
+      <xs:element name="hi" type="hi-type"/>
+      <xs:element name="unclear" type="unclear-type"/>
+      <xs:element name="ref" type="ref-type"/>
+    </xs:choice>
+    <xs:attributeGroup ref="n-3-att"/>
+    <xs:attribute ref="xml:id" use="required" />
+  </xs:complexType>
+
+
+  <!-- Corpo: saltos -->
+
+  <xs:complexType name="lb-type"/>
+
+  <xs:complexType name="pb-type">
+    <xs:attribute ref="xml:id" use="required"/>
+  </xs:complexType>
+
+  <!-- Corpo: caracteres -->
+
+  <xs:complexType name="c-type" mixed="true">
+    <xs:sequence>
+      <xs:element name="c" type="c-type" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="inicial"/>
+          <xs:enumeration value="expansiva"/>
+          <xs:enumeration value="superindice"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+      <xs:attribute name="subtype" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="apertura"/>
+            <xs:enumeration value="rubrica"/>
+            <xs:enumeration value="refran"/>
+            <xs:enumeration value="cobra"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    <xs:attribute name="rend" use="optional">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="decorado"/>
+          <xs:enumeration value="vermello"/>
+          <xs:enumeration value="azul"/>
+          <xs:enumeration value="outro"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- Corpo: subst -->
+
+  <xs:complexType name="subst-type">
+    <xs:sequence>
+      <xs:element name="del" type="del-type"/>
+      <xs:element name="add" type="add-type"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="add-type" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="c" type="c-type"/>
+      <xs:element name="choice" type="choice-type"/>
+      <xs:element name="lb" type="lb-type"/>
+      <xs:element name="supplied" type="supplied-type"/>
+      <xs:element name="subst" type="subst-type"/>
+      <xs:element name="del" type="del-type"/>
+      <xs:element name="space" type="space-type"/>
+    </xs:choice>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="sobre"/>
+          <xs:enumeration value="arriba"/>
+          <xs:enumeration value="abaixo"/>
+          <xs:enumeration value="marxe"/>
+          <xs:enumeration value="refeito"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="del-type" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="space" type="space-type"/>
+      <xs:element name="c" type="c-type"/>
+    </xs:choice>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="raspadura"/>
+          <xs:enumeration value="riscada"/>
+          <xs:enumeration value="punto"/>
+          <xs:enumeration value="puntoarriba"/>
+          <xs:enumeration value="debaixo"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="subtype" use="optional">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="parcial"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- Corpo: choice -->
+
+  <xs:complexType name="choice-type">
+    <xs:choice minOccurs="1" maxOccurs="1">
+      <xs:sequence>
+        <xs:element name="abbr" type="abbr-type"/>
+        <xs:element name="expan" type="xs:string"/>
+      </xs:sequence>
+      <xs:sequence>
+        <xs:element name="orig">
+          <xs:complexType mixed="true">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="c" type="c-type" minOccurs="0"/>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="reg">
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:string">
+                <xs:attribute name="type" use="required">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                      <xs:pattern value="v-(([a-z]|[0-9])([a-z]|[0-9])([a-z]|[0-9])([a-z]|[0-9]))"></xs:pattern>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:sequence>
+        <xs:element name="sic" type="sic-type"/>
+        <xs:element name="corr" type="corr-type"/>
+      </xs:sequence>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="abbr-type" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="3">
+      <xs:element name="c" type="c-type"/>
+      <xs:element name="choice" type="choice-type"/>
+    </xs:choice>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="([a-z]|[0-9])([a-z]|[0-9])([a-z]|[0-9])-([a-z]|[0-9])([a-z]|[0-9])([a-z]|[0-9])"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="sic-type" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="c" type="c-type"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="corr-type" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="1">
+      <xs:element name="choice" type="choice-type"/>
+      <xs:element name="c" type="c-type"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <!-- Corpo: space, gap e damage -->
+
+  <xs:complexType name="space-type">
+    <xs:attributeGroup ref="extent-att"/>
+  </xs:complexType>
+
+  <xs:complexType name="gap-type">
+    <xs:attributeGroup ref="extent-att"/>
+    <xs:attribute name="reason" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="saltodecolumna">
+            <xs:annotation>
+              <xs:documentation>Non hai texto nin espazo para copialo para aforrar espazo debido a que se inicia unha nova columna, sexa no mesmo folio ou no seguinte.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="salto">
+            <xs:annotation>
+              <xs:documentation>Omisión por motivos diferentes aos anteriores..</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="damage-type">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="agent" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="manchas">
+                <xs:annotation>
+                  <xs:documentation>Existen manchas no manuscrito.</xs:documentation>
+                </xs:annotation>
+              </xs:enumeration>
+              <xs:enumeration value="accidente">
+                <xs:annotation>
+                  <xs:documentation>Produciuse un accidente no folio. Podería ser porque rachou a esquina inferior do mesmo.</xs:documentation>
+                </xs:annotation>
+              </xs:enumeration>
+              <xs:enumeration value="folioperdido">
+                <xs:annotation>
+                  <xs:documentation>O folio está perdido.</xs:documentation>
+                </xs:annotation>
+              </xs:enumeration>
+              <xs:enumeration value="tintadesgastada">
+                <xs:annotation>
+                  <xs:documentation>A tinta do verso está desgastada ou é pouco visíbel.</xs:documentation>
+                </xs:annotation>
+              </xs:enumeration>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+    
+  </xs:complexType>
+
+  <xs:attributeGroup name="extent-att">
+    <xs:attribute name="extent" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="rubrica">
+            <xs:annotation>
+              <xs:documentation>space: «No folio observamos o espazo deixado para copiar a rúbrica», gap: «Omisión de rúbrica».</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="refran">
+            <xs:annotation>
+              <xs:documentation>space: «Deixouse un espazo para copiar o refrán», gap: «Omisión de refrán».</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="verso">
+            <xs:annotation>
+              <xs:documentation>space: «Espazo en branco que debería ocupar un verso», gap: «Omisión dun verso».</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="outro">
+            <xs:annotation>
+              <xs:documentation>space: «Calquera outro tipo de espazo visíbel», gap: «Omisión doutro tipo de fragmento».</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <!-- Corpo: supplied-->
+  <xs:complexType name="supplied-type" mixed="true">
+    <xs:sequence>
+      <xs:element name="c" type="c-type" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="evidence" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="letraagarda"/>
+          <xs:enumeration value="outro"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- Corpo: unclear-->
+  <xs:complexType name="unclear-type">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="lb" type="lb-type"/>
+      <xs:element name="cb" type="lb-type"/>
+      <xs:element name="pb" type="pb-type"/>
+      <xs:element name="c" type="c-type"/>
+      <xs:element name="choice" type="choice-type"/>
+      <xs:element name="subst" type="subst-type"/>
+      <xs:element name="add" type="add-type"/>
+      <xs:element name="del" type="del-type"/>
+      <xs:element name="space" type="space-type"/>
+      <xs:element name="gap" type="gap-type"/>
+      <xs:element name="damage" type="damage-type"/>
+      <xs:element name="supplied" type="supplied-type"/>
+      <xs:element name="hi" type="hi-type"/>
+      <xs:element name="ref" type="ref-type"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <!-- Corpo: hi-->
+  <xs:complexType name="hi-type" mixed="true"> 
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="lb" type="lb-type"/>
+      <xs:element name="cb" type="lb-type"/>
+      <xs:element name="pb" type="pb-type"/>
+      <xs:element name="c" type="c-type"/>
+      <xs:element name="choice" type="choice-type"/>
+      <xs:element name="subst" type="subst-type"/>
+      <xs:element name="add" type="add-type"/>
+      <xs:element name="del" type="del-type"/>
+      <xs:element name="space" type="space-type"/>
+      <xs:element name="gap" type="gap-type"/>
+      <xs:element name="damage" type="damage-type"/>
+      <xs:element name="supplied" type="supplied-type"/>
+      <xs:element name="hi" type="hi-type"/>
+      <xs:element name="unclear" type="unclear-type"/>
+      <xs:element name="ref" type="ref-type"/>
+    </xs:choice>
+    <xs:attribute name="rend" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="n">
+            <xs:annotation>
+              <xs:documentation>Texto groso.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="i">
+            <xs:annotation>
+              <xs:documentation>Cursiva</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="v">
+            <xs:annotation>
+              <xs:documentation>Versaletas</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="vermello">
+            <xs:annotation>
+              <xs:documentation>Texto en vermello</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="!">
+            <xs:annotation>
+              <xs:documentation>. Non debería estar na versión final.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="!!">
+            <xs:annotation>
+              <xs:documentation>. Non debería estar na versión final.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="azulelvira">
+            <xs:annotation>
+              <xs:documentation>Texto marcado para Elvira. Non debería estar na versión final.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="rosaelvira">
+            <xs:annotation>
+              <xs:documentation>Texto marcado para Elvira. Non debería estar na versión final.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="laranxaelvira">
+            <xs:annotation>
+              <xs:documentation>Texto marcado para Elvira. Non debería estar na versión final.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="verdeelvira">
+            <xs:annotation>
+              <xs:documentation>Texto marcado para Elvira. Non debería estar na versión final.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="amareloelvira">
+            <xs:annotation>
+              <xs:documentation>Texto marcado para Elvira. Non debería estar na versión final.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- Corpo: ref-->
+  <xs:complexType name="ref-type" mixed="true">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="target" type="xs:string"/>
+        <!-- <xs:attribute name="target" type="xs:IDREF"/> -->
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+
+  <!-- COMÚNS XERAIS -->
+  <xs:attributeGroup name="n-2-att">
+    <xs:attribute name="n" use="optional">
+      <xs:simpleType>
+        <xs:restriction base="xs:integer">
+          <xs:pattern value="[0-9]{2}"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="n-3-att">
+    <xs:attribute name="n" use="optional">
+      <xs:simpleType>
+        <xs:restriction base="xs:integer">
+          <xs:pattern value="[0-9]{3}"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="n-manuscritos">
+    <xs:attribute name="n" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="((To|T_|E_|F_|B_|CR|MO|CA)-((\d{3})|(\w{1}\d{2}))|To-FM(\d{1})|To-FC(\d{1}))"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+
+
+
+
+</xs:schema>

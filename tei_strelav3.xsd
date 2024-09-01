@@ -389,7 +389,8 @@
           <xs:enumeration value="rubrica"/>
           <xs:enumeration value="refraninicial"/>
           <xs:enumeration value="cobras"/>
-          <xs:enumeration value="rubricaexplicativa"/>
+          <xs:enumeration value="paratextoInicial"/>
+          <xs:enumeration value="paratextoFinal"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
